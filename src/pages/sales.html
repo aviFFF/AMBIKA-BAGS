@@ -225,6 +225,25 @@
       padding-bottom: 10px;
       border-bottom: 1px solid #eee;
     }
+    .selected-row {
+      background-color: #e6f7ff !important;
+    }
+    .generate-btn-container {
+      margin: 15px 0;
+      text-align: right;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+    .badge-primary {
+      background-color: #007bff;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -250,7 +269,10 @@
               <h3>Order Management</h3>
               <div>
                 <button class="btn btn-primary" onclick="showAddOrderForm()">Add Order</button>
-                <button class="btn btn-success" onclick="showGenerateEstimateForm()">Generate Estimate</button>
+                <span id="action-bar-selected" style="display: none;">
+                  <span id="action-bar-count" class="badge badge-primary">0 Selected</span>
+                  <button class="btn btn-success" onclick="generateEstimatesFromSelected()">Generate Estimate</button>
+                </span>
               </div>
             </div>
 
@@ -318,6 +340,7 @@
               <table id="orders-table">
                 <thead>
                   <tr>
+                    <th>Select</th>
                     <th>Order ID</th>
                     <th>Date</th>
                     <th>Customer Name</th>
@@ -440,6 +463,7 @@
     let estimates = [];
     let selectedOrderIndex = null;
     let selectedEstimateIndex = null;
+    let selectedOrders = new Set();
     let productInventory = {
       'P001': { stock: 120, supplier: 'ABC Suppliers', lastUpdated: '2023-05-15' },
       'P002': { stock: 45, supplier: 'XYZ Distributors', lastUpdated: '2023-05-10' },
@@ -671,8 +695,16 @@
       tbody.innerHTML = '';
       
       orders.forEach((order, index) => {
+        const isSelected = selectedOrders.has(order.id);
         const row = document.createElement('tr');
+        if (isSelected) {
+          row.classList.add('selected-row');
+        }
+        
         row.innerHTML = `
+          <td>
+            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleOrderSelection('${order.id}', this.checked)">
+          </td>
           <td>${order.id}</td>
           <td>${new Date(order.date).toLocaleDateString()}</td>
           <td>${order.customerName}</td>
@@ -686,6 +718,8 @@
         `;
         tbody.appendChild(row);
       });
+      
+      updateSelectedOrdersDisplay();
     }
 
     // Function to view order
@@ -823,6 +857,91 @@
           order.totalAmount = order.items.reduce((sum, item) => sum + item.total, 0);
           showOrderDetail(true);
         }
+      }
+    }
+
+    // Function to toggle order selection
+    function toggleOrderSelection(orderId, isSelected) {
+      if (isSelected) {
+        selectedOrders.add(orderId);
+      } else {
+        selectedOrders.delete(orderId);
+      }
+      
+      updateSelectedOrdersDisplay();
+      renderOrdersTable();
+    }
+    
+    // Function to update selected orders display
+    function updateSelectedOrdersDisplay() {
+      const actionBarSelected = document.getElementById('action-bar-selected');
+      const actionBarCount = document.getElementById('action-bar-count');
+      
+      if (selectedOrders.size > 0) {
+        // Update action bar controls
+        actionBarCount.textContent = `${selectedOrders.size} Selected`;
+        actionBarSelected.style.display = 'inline-block';
+      } else {
+        // Update action bar controls
+        actionBarSelected.style.display = 'none';
+      }
+    }
+    
+    // Function to generate estimates from selected orders
+    function generateEstimatesFromSelected() {
+      if (selectedOrders.size === 0) {
+        alert("Please select at least one order to generate estimates");
+        return;
+      }
+      
+      let generatedCount = 0;
+      let skippedCount = 0;
+      
+      selectedOrders.forEach(orderId => {
+        const orderIndex = orders.findIndex(order => order.id === orderId);
+        if (orderIndex !== -1) {
+          const estimateId = orderId.replace('ORD-', 'EST-');
+          
+          // Check if estimate already exists
+          if (estimates.some(est => est.id === estimateId)) {
+            skippedCount++;
+            return;
+          }
+          
+          const order = orders[orderIndex];
+          const estimateItems = JSON.parse(JSON.stringify(order.items));
+          
+          const estimate = {
+            id: estimateId,
+            date: order.date,
+            customerName: order.customerName,
+            agentName: order.agentName,
+            items: estimateItems,
+            totalItems: order.totalItems,
+            totalAmount: order.totalAmount,
+            status: 'Pending',
+            orderReference: order.id
+          };
+          
+          estimates.push(estimate);
+          generatedCount++;
+        }
+      });
+      
+      // Clear selections
+      selectedOrders.clear();
+      updateSelectedOrdersDisplay();
+      renderOrdersTable();
+      
+      if (generatedCount > 0) {
+        let message = `Generated ${generatedCount} estimate(s) successfully!`;
+        if (skippedCount > 0) {
+          message += ` (${skippedCount} already existed and were skipped)`;
+        }
+        alert(message);
+        showEstimates();
+      } else if (skippedCount > 0) {
+        alert(`No new estimates generated. ${skippedCount} already existed and were skipped.`);
       }
     }
 
