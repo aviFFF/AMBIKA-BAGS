@@ -193,7 +193,7 @@
             <div id="orders-count" class="card-value">0</div>
             <div class="card-footer">
               <span>Click to view details</span>
-              <span id="orders-value">$0</span>
+              <span id="orders-value">₹0</span>
             </div>
           </div>
 
@@ -202,7 +202,7 @@
             <div id="pending-orders-count" class="card-value">0</div>
             <div class="card-footer">
               <span>Awaiting processing</span>
-              <span id="pending-orders-value">$0</span>
+              <span id="pending-orders-value">₹0</span>
             </div>
           </div>
 
@@ -305,7 +305,7 @@
         const ordersValue = todayOrders.reduce((sum, order) => sum + order.total, 0);
 
         document.getElementById('orders-count').textContent = ordersCount;
-        document.getElementById('orders-value').textContent = `$${ordersValue.toFixed(2)}`;
+        document.getElementById('orders-value').textContent = `₹${ordersValue.toFixed(2)}`;
 
         // Load pending orders
         const pendingOrders = await window.api.getPendingOrders();
@@ -313,7 +313,7 @@
         const pendingOrdersValue = pendingOrders.reduce((sum, order) => sum + order.total, 0);
 
         document.getElementById('pending-orders-count').textContent = pendingOrdersCount;
-        document.getElementById('pending-orders-value').textContent = `$${pendingOrdersValue.toFixed(2)}`;
+        document.getElementById('pending-orders-value').textContent = `₹${pendingOrdersValue.toFixed(2)}`;
 
         // Load inventory
         const inventory = await window.api.getInventory();
@@ -359,7 +359,7 @@
               <td>${new Date(order.date).toLocaleDateString()}</td>
               <td>${order.vendor_name || 'Unknown vendor'}</td>
               <td>${itemsText}</td>
-              <td>$${order.total.toFixed(2)}</td>
+              <td>₹${order.total.toFixed(2)}</td>
               <td>
                 <button class="edit-btn" data-id="${order.id}" data-type="order">View</button>
               </td>
@@ -404,7 +404,7 @@
               <td>${new Date(order.date).toLocaleDateString()}</td>
               <td>${order.vendor_name || 'Unknown vendor'}</td>
               <td>${itemsText}</td>
-              <td>$${order.total.toFixed(2)}</td>
+              <td>₹${order.total.toFixed(2)}</td>
               <td>
                 <button class="edit-btn" data-id="${order.id}" data-type="order">View</button>
               </td>
@@ -451,7 +451,7 @@
               <td>${item.id}</td>
               <td>${item.name}</td>
               <td>${item.quantity || 0}</td>
-              <td>$${item.price ? item.price.toFixed(2) : '0.00'}</td>
+              <td>₹${item.price ? item.price.toFixed(2) : '0.00'}</td>
               <td><span class="status-badge ${statusClass}">${status}</span></td>
               <td>
                 <button class="edit-btn" data-id="${item.id}" data-type="inventory">View</button>

@@ -58,6 +58,14 @@
     .btn-outline:hover {
       background-color: #f0f4ff;
     }
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+    }
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
     .page-content {
       background-color: white;
       border-radius: 8px;
@@ -280,7 +288,6 @@
                 <tr>
                   <th>ID</th>
                   <th>Supplier Name</th>
-                  <th>Contact Person</th>
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Actions</th>
@@ -419,14 +426,13 @@
         row.innerHTML = `
           <td>${vendor.id}</td>
           <td>${vendor.name}</td>
-          <td>${vendor.contact_person}</td>
           <td>${vendor.email}</td>
           <td>${vendor.phone}</td>
           <td class="action-cell">
             <button class="btn btn-outline view-btn" data-id="${vendor.id}">View</button>
             ${isAdmin ? `
               <button class="btn btn-outline edit-btn" data-id="${vendor.id}">Edit</button>
-              <button class="btn btn-outline delete-btn" data-id="${vendor.id}">Delete</button>
+              <button class="btn btn-danger delete-btn" data-id="${vendor.id}">Delete</button>
             ` : ''}
           </td>
         `;
@@ -464,15 +470,11 @@
               <button class="btn btn-outline view-btn" data-id="${vendor.id}">View</button>
               ${isAdmin ? `
                 <button class="btn btn-outline edit-btn" data-id="${vendor.id}">Edit</button>
-                <button class="btn btn-outline delete-btn" data-id="${vendor.id}">Delete</button>
+                <button class="btn btn-danger delete-btn" data-id="${vendor.id}">Delete</button>
               ` : ''}
             </div>
           </div>
           <div class="vendor-details">
-            <div class="details-row">
-              <div class="details-label">Contact Person:</div>
-              <div class="details-value">${vendor.contactPerson}</div>
-            </div>
             <div class="details-row">
               <div class="details-label">Email:</div>
               <div class="details-value">${vendor.email}</div>
@@ -507,7 +509,6 @@
       
       const filteredVendors = vendors.filter(vendor => {
         return vendor.name.toLowerCase().includes(searchTerm) || 
-               vendor.contactPerson.toLowerCase().includes(searchTerm) ||
                vendor.email.toLowerCase().includes(searchTerm);
       });
       

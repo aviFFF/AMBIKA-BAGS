@@ -244,6 +244,50 @@
       background-color: #007bff;
       color: white;
     }
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .hidden.modal-overlay {
+      display: none;
+    }
+    .modal-content {
+      background-color: white;
+      width: 90%;
+      max-width: 1200px;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+    .modal-header h3 {
+      margin: 0;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -268,11 +312,7 @@
             <div class="action-bar">
               <h3>Order Management</h3>
               <div>
-                <button class="btn btn-primary" onclick="showAddOrderForm()">Add Order</button>
-                <span id="action-bar-selected" style="display: none;">
-                  <span id="action-bar-count" class="badge badge-primary">0 Selected</span>
-                  <button class="btn btn-success" onclick="generateEstimatesFromSelected()">Generate Estimate</button>
-                </span>
+                <button class="btn btn-primary" onclick="window.location.href='create-order.html'">Add Order</button>
               </div>
             </div>
 
@@ -286,10 +326,6 @@
                 <div class="form-group">
                   <label for="orderDate">Date</label>
                   <input type="date" id="orderDate" value="">
-                </div>
-                <div class="form-group">
-                  <label for="agentName">Agent Name</label>
-                  <input type="text" id="agentName" placeholder="Enter agent name">
                 </div>
                 <div class="form-group">
                   <label for="customerName">Customer Name</label>
@@ -340,13 +376,11 @@
               <table id="orders-table">
                 <thead>
                   <tr>
-                    <th>Select</th>
                     <th>Order ID</th>
                     <th>Date</th>
                     <th>Customer Name</th>
-                    <th>Agent Name</th>
-                    <th>Total Items</th>
                     <th>Total Amount</th>
+                    <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -356,33 +390,32 @@
               </table>
             </div>
 
-            <div id="order-detail-section" class="hidden">
-              <h3>Order Details</h3>
-              <div class="flex-container">
-                <div class="order-edit-section">
-                  <table id="order-details-table">
-                    <thead>
-                      <tr>
-                        <th>Sr Number</th>
-                        <th>Product Code</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Size</th>
-                        <th>Quantity</th>
-                        <th>Rate</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody id="order-details-body">
-                      <!-- Order details will be populated here -->
-                    </tbody>
-                  </table>
+            <div id="order-detail-section" class="hidden modal-overlay">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3>Order Details</h3>
+                  <button class="modal-close" onclick="closeOrderDetail()">&times;</button>
                 </div>
-                
-                <div class="product-card" id="product-availability">
-                  <h3>Product Availability</h3>
-                  <div id="product-info" class="product-info">
-                    <p>Select a product to view availability</p>
+                <div class="flex-container">
+                  <div class="order-edit-section">
+                    <table id="order-details-table">
+                      <thead>
+                        <tr>
+                          <th>Sr Number</th>
+                          <th>Product Code</th>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Size</th>
+                          <th>Quantity</th>
+                          <th>Rate</th>
+                          <th>Total</th>
+                          <th>Product Availability</th>
+                        </tr>
+                      </thead>
+                      <tbody id="order-details-body">
+                        <!-- Order details will be populated here -->
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -413,33 +446,32 @@
               </table>
             </div>
             
-            <div id="estimate-detail-section" class="hidden">
-              <h3>Estimate Details</h3>
-              <div class="flex-container">
-                <div class="order-edit-section">
-                  <table id="estimate-details-table">
-                    <thead>
-                      <tr>
-                        <th>Sr Number</th>
-                        <th>Product Code</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Size</th>
-                        <th>Quantity</th>
-                        <th>Rate</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody id="estimate-details-body">
-                      <!-- Estimate details will be populated here -->
-                    </tbody>
-                  </table>
+            <div id="estimate-detail-section" class="hidden modal-overlay">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3>Estimate Details</h3>
+                  <button class="modal-close" onclick="closeEstimateDetail()">&times;</button>
                 </div>
-                
-                <div class="product-card" id="estimate-product-availability">
-                  <h3>Product Availability</h3>
-                  <div id="estimate-product-info" class="product-info">
-                    <p>Select a product to view availability</p>
+                <div class="flex-container">
+                  <div class="order-edit-section">
+                    <table id="estimate-details-table">
+                      <thead>
+                        <tr>
+                          <th>Sr Number</th>
+                          <th>Product Code</th>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Size</th>
+                          <th>Quantity</th>
+                          <th>Rate</th>
+                          <th>Total</th>
+                          <th>Product Availability</th>
+                        </tr>
+                      </thead>
+                      <tbody id="estimate-details-body">
+                        <!-- Estimate details will be populated here -->
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -463,7 +495,6 @@
     let estimates = [];
     let selectedOrderIndex = null;
     let selectedEstimateIndex = null;
-    let selectedOrders = new Set();
     let productInventory = {
       'P001': { stock: 120, supplier: 'ABC Suppliers', lastUpdated: '2023-05-15' },
       'P002': { stock: 45, supplier: 'XYZ Distributors', lastUpdated: '2023-05-10' },
@@ -497,7 +528,6 @@
       document.getElementById('order-form').classList.remove('hidden');
       document.getElementById('orderNumber').value = 'ORD-' + (orders.length + 1).toString().padStart(3, '0');
       document.getElementById('orderDate').valueAsDate = new Date();
-      document.getElementById('agentName').value = '';
       document.getElementById('customerName').value = '';
       orderItems = [];
     }
@@ -628,10 +658,9 @@
     function saveOrder() {
       const orderNumber = document.getElementById('orderNumber').value;
       const orderDate = document.getElementById('orderDate').value;
-      const agentName = document.getElementById('agentName').value;
       const customerName = document.getElementById('customerName').value;
       
-      if (!orderNumber || !orderDate || !agentName || !customerName) {
+      if (!orderNumber || !orderDate || !customerName) {
         alert('Please fill in all order details');
         return;
       }
@@ -647,7 +676,7 @@
         id: orderNumber,
         date: orderDate,
         customerName: customerName,
-        agentName: agentName,
+        agentName: '',
         items: orderItems,
         totalItems: orderItems.length,
         totalAmount: totalAmount
@@ -663,18 +692,43 @@
       try {
         const response = await fetch('/api/products');
         const products = await response.json();
-        // Keep existing orders, just update products
-        renderOrdersTable();
-      } catch (error) {
-        console.error('Error loading orders:', error);
-        // Fallback sample orders if needed
-        if (orders.length === 0) {
+        // Load orders from localStorage
+        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        if (storedOrders.length > 0) {
+          orders = storedOrders;
+        } else if (orders.length === 0) {
+          // Fallback sample data
           orders = [
             {
               id: "ORD-001",
               date: "2023-05-15",
               customerName: "John Doe",
-              agentName: "Sales Agent 1",
+              agentName: "",
+              totalItems: 3,
+              totalAmount: 4500,
+              items: [
+                { srNumber: 1, productCode: 'P001', name: 'Product 1', category: 'Electronics', size: 'M', quantity: 2, rate: 1200, total: 2400 },
+                { srNumber: 2, productCode: 'P003', name: 'Product 3', category: 'Home', size: 'S', quantity: 3, rate: 450, total: 1350 },
+                { srNumber: 3, productCode: 'P002', name: 'Product 2', category: 'Clothing', size: 'L', quantity: 1, rate: 750, total: 750 }
+              ]
+            }
+          ];
+        }
+        renderOrdersTable();
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        // Load orders from localStorage
+        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        if (storedOrders.length > 0) {
+          orders = storedOrders;
+        } else if (orders.length === 0) {
+          // Fallback sample data
+          orders = [
+            {
+              id: "ORD-001",
+              date: "2023-05-15",
+              customerName: "John Doe",
+              agentName: "",
               totalItems: 3,
               totalAmount: 4500,
               items: [
@@ -695,48 +749,59 @@
       tbody.innerHTML = '';
       
       orders.forEach((order, index) => {
-        const isSelected = selectedOrders.has(order.id);
         const row = document.createElement('tr');
-        if (isSelected) {
-          row.classList.add('selected-row');
+        
+        // Check if order has associated estimate
+        let statusDisplay = 'No Estimate';
+        let actionButtons = `
+          <button class="btn btn-info btn-sm" onclick="viewOrder(${index})">View</button>
+          <button class="btn btn-success btn-sm" onclick="editOrder(${index})">Edit</button>
+        `;
+        
+        if (estimates.some(est => est.orderId === order.id)) {
+          const estimate = estimates.find(est => est.orderId === order.id);
+          statusDisplay = `Estimate: ${estimate.id}`;
+          actionButtons += `
+            <button class="btn btn-secondary btn-sm" onclick="viewEstimate(estimates.findIndex(e => e.id === '${estimate.id}'))">View Estimate</button>
+          `;
+        } else {
+          actionButtons += `
+            <button class="btn btn-primary btn-sm" onclick="generateEstimateFromOrder(${index})">Generate Estimate</button>
+          `;
         }
         
         row.innerHTML = `
-          <td>
-            <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleOrderSelection('${order.id}', this.checked)">
-          </td>
           <td>${order.id}</td>
           <td>${new Date(order.date).toLocaleDateString()}</td>
           <td>${order.customerName}</td>
-          <td>${order.agentName}</td>
-          <td>${order.totalItems}</td>
           <td>₹${order.totalAmount}</td>
+          <td>${statusDisplay}</td>
           <td>
-            <button class="btn btn-info btn-sm" onclick="viewOrder(${index})">View</button>
-            <button class="btn btn-success btn-sm" onclick="editOrder(${index})">Edit</button>
+            ${actionButtons}
           </td>
         `;
         tbody.appendChild(row);
       });
-      
-      updateSelectedOrdersDisplay();
     }
 
     // Function to view order
     function viewOrder(index) {
       selectedOrderIndex = index;
       showOrderDetail(false);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to edit order
     function editOrder(index) {
       selectedOrderIndex = index;
       showOrderDetail(true);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to show order detail
     function showOrderDetail(editable) {
       document.getElementById('order-detail-section').classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
       const orderDetailBody = document.getElementById('order-details-body');
       orderDetailBody.innerHTML = '';
       
@@ -756,6 +821,7 @@
               <td><input type="number" class="editable" value="${item.quantity}" onchange="updateDetailQuantity(${item.srNumber}, this.value)"></td>
               <td><input type="number" class="editable" value="${item.rate}" onchange="updateDetailRate(${item.srNumber}, this.value)"></td>
               <td>₹${item.total}</td>
+              <td>${productInventory[item.productCode]?.stock || 'Unknown'}</td>
             `;
           } else {
             row.innerHTML = `
@@ -767,47 +833,12 @@
               <td>${item.quantity}</td>
               <td>₹${item.rate}</td>
               <td>₹${item.total}</td>
+              <td>${productInventory[item.productCode]?.stock || 'Unknown'}</td>
             `;
           }
           
           orderDetailBody.appendChild(row);
         });
-        
-        updateProductAvailability(order.items[0].productCode);
-      }
-    }
-
-    // Function to update product availability card
-    function updateProductAvailability(productCode) {
-      const productInfoDiv = document.getElementById('product-info');
-      const product = orders.find(o => o.items.some(i => i.productCode === productCode));
-      const inventory = productInventory[productCode];
-      
-      if (product && inventory) {
-        let stockClass = 'in-stock';
-        let stockText = 'In Stock';
-        
-        if (inventory.stock === 0) {
-          stockClass = 'out-of-stock';
-          stockText = 'Out of Stock';
-        } else if (inventory.stock < 10) {
-          stockClass = 'low-stock';
-          stockText = 'Low Stock';
-        }
-        
-        productInfoDiv.innerHTML = `
-          <p><span>Product Code:</span> <span>${productCode}</span></p>
-          <p><span>Name:</span> <span>${product.items.find(i => i.productCode === productCode).name}</span></p>
-          <p><span>Category:</span> <span>${product.items.find(i => i.productCode === productCode).category}</span></p>
-          <p><span>Size:</span> <span>${product.items.find(i => i.productCode === productCode).size}</span></p>
-          <p><span>Price:</span> <span>₹${product.items.find(i => i.productCode === productCode).rate}</span></p>
-          <p><span>Available Quantity:</span> <span>${inventory.stock}</span></p>
-          <p><span>Supplier:</span> <span>${inventory.supplier}</span></p>
-          <p><span>Last Updated:</span> <span>${inventory.lastUpdated}</span></p>
-          <div class="availability ${stockClass}">${stockText}</div>
-        `;
-      } else {
-        productInfoDiv.innerHTML = `<p>No product data available for code: ${productCode}</p>`;
       }
     }
 
@@ -825,7 +856,10 @@
             item.size = product.size;
             item.rate = product.price;
             item.total = item.quantity * item.rate;
-            updateProductAvailability(value);
+            
+            // Update localStorage
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
             showOrderDetail(true);
           }
         }
@@ -841,12 +875,16 @@
           item.quantity = parseInt(value) || 0;
           item.total = item.quantity * item.rate;
           order.totalAmount = order.items.reduce((sum, item) => sum + item.total, 0);
+          
+          // Update localStorage
+          localStorage.setItem('orders', JSON.stringify(orders));
+          
           showOrderDetail(true);
         }
       }
     }
 
-    // Function to update rate in detail view
+    // Function to update detail rate in detail view
     function updateDetailRate(srNumber, value) {
       if (selectedOrderIndex !== null) {
         const order = orders[selectedOrderIndex];
@@ -855,151 +893,60 @@
           item.rate = parseFloat(value) || 0;
           item.total = item.quantity * item.rate;
           order.totalAmount = order.items.reduce((sum, item) => sum + item.total, 0);
+          
+          // Update localStorage
+          localStorage.setItem('orders', JSON.stringify(orders));
+          
           showOrderDetail(true);
         }
       }
     }
 
-    // Function to toggle order selection
-    function toggleOrderSelection(orderId, isSelected) {
-      if (isSelected) {
-        selectedOrders.add(orderId);
-      } else {
-        selectedOrders.delete(orderId);
-      }
+    // Function to generate estimate from order
+    function generateEstimateFromOrder(index) {
+      const order = orders[index];
       
-      updateSelectedOrdersDisplay();
-      renderOrdersTable();
-    }
-    
-    // Function to update selected orders display
-    function updateSelectedOrdersDisplay() {
-      const actionBarSelected = document.getElementById('action-bar-selected');
-      const actionBarCount = document.getElementById('action-bar-count');
-      
-      if (selectedOrders.size > 0) {
-        // Update action bar controls
-        actionBarCount.textContent = `${selectedOrders.size} Selected`;
-        actionBarSelected.style.display = 'inline-block';
-      } else {
-        // Update action bar controls
-        actionBarSelected.style.display = 'none';
-      }
-    }
-    
-    // Function to generate estimates from selected orders
-    function generateEstimatesFromSelected() {
-      if (selectedOrders.size === 0) {
-        alert("Please select at least one order to generate estimates");
+      // Check if an estimate already exists for this order
+      if (estimates.some(est => est.orderId === order.id)) {
+        const existingEstimate = estimates.find(est => est.orderId === order.id);
+        alert(`Estimate already exists for this order: ${existingEstimate.id}`);
         return;
       }
       
-      let generatedCount = 0;
-      let skippedCount = 0;
+      // Create new estimate from order
+      const estimateId = 'EST-' + (estimates.length + 1).toString().padStart(3, '0');
+      const user = JSON.parse(sessionStorage.getItem('user'));
       
-      selectedOrders.forEach(orderId => {
-        const orderIndex = orders.findIndex(order => order.id === orderId);
-        if (orderIndex !== -1) {
-          const estimateId = orderId.replace('ORD-', 'EST-');
-          
-          // Check if estimate already exists
-          if (estimates.some(est => est.id === estimateId)) {
-            skippedCount++;
-            return;
-          }
-          
-          const order = orders[orderIndex];
-          const estimateItems = JSON.parse(JSON.stringify(order.items));
-          
-          const estimate = {
-            id: estimateId,
-            date: order.date,
-            customerName: order.customerName,
-            agentName: order.agentName,
-            items: estimateItems,
-            totalItems: order.totalItems,
-            totalAmount: order.totalAmount,
-            status: 'Pending',
-            orderReference: order.id
-          };
-          
-          estimates.push(estimate);
-          generatedCount++;
-        }
-      });
-      
-      // Clear selections
-      selectedOrders.clear();
-      updateSelectedOrdersDisplay();
-      renderOrdersTable();
-      
-      if (generatedCount > 0) {
-        let message = `Generated ${generatedCount} estimate(s) successfully!`;
-        if (skippedCount > 0) {
-          message += ` (${skippedCount} already existed and were skipped)`;
-        }
-        alert(message);
-        showEstimates();
-      } else if (skippedCount > 0) {
-        alert(`No new estimates generated. ${skippedCount} already existed and were skipped.`);
-      }
-    }
-
-    // Function to show generate estimate form
-    function showGenerateEstimateForm() {
-      if (orders.length === 0) {
-        alert("Please create at least one order first");
-        return;
-      }
-      
-      // Show a modal dialog or create a dedicated UI for selecting orders
-      const orderToEstimate = prompt("Enter the Order ID to generate an estimate from:");
-      if (!orderToEstimate) return;
-      
-      const orderIndex = orders.findIndex(order => order.id === orderToEstimate);
-      if (orderIndex === -1) {
-        alert("Order not found. Please check the Order ID.");
-        return;
-      }
-      
-      generateEstimateFromOrder(orderIndex);
-    }
-
-    // Function to generate an estimate from an order
-    function generateEstimateFromOrder(orderIndex) {
-      const order = orders[orderIndex];
-      
-      // Create a new estimate ID based on the order ID
-      const estimateId = order.id.replace('ORD-', 'EST-');
-      
-      // Check if an estimate with this ID already exists
-      if (estimates.some(est => est.id === estimateId)) {
-        alert("An estimate has already been generated for this order");
-        return;
-      }
-      
-      // Clone order items to prevent reference issues
-      const estimateItems = JSON.parse(JSON.stringify(order.items));
-      
-      const estimate = {
+      const newEstimate = {
         id: estimateId,
-        date: order.date,
+        orderId: order.id,
+        date: new Date().toISOString().split('T')[0],
         customerName: order.customerName,
-        agentName: order.agentName,
-        items: estimateItems,
-        totalItems: order.totalItems,
+        agentName: user ? user.name : 'Unknown',
+        totalItems: order.items.length,
         totalAmount: order.totalAmount,
         status: 'Pending',
-        orderReference: order.id
+        items: [...order.items]
       };
       
-      estimates.push(estimate);
-      alert(`Estimate ${estimateId} has been generated successfully!`);
-      showEstimates();
+      estimates.push(newEstimate);
+      
+      // Save to localStorage
+      localStorage.setItem('estimates', JSON.stringify(estimates));
+      
+      alert(`Estimate ${estimateId} has been generated from order ${order.id}`);
+      
+      // Refresh orders table to show updated status
+      renderOrdersTable();
     }
 
     // Function to load estimates
     function loadEstimates() {
+      // Load estimates from localStorage
+      const storedEstimates = JSON.parse(localStorage.getItem('estimates') || '[]');
+      if (storedEstimates.length > 0) {
+        estimates = storedEstimates;
+      }
       renderEstimatesTable();
     }
 
@@ -1031,17 +978,20 @@
     function viewEstimate(index) {
       selectedEstimateIndex = index;
       showEstimateDetail(false);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to edit estimate
     function editEstimate(index) {
       selectedEstimateIndex = index;
       showEstimateDetail(true);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
     // Function to show estimate detail
     function showEstimateDetail(editable) {
       document.getElementById('estimate-detail-section').classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
       const estimateDetailBody = document.getElementById('estimate-details-body');
       estimateDetailBody.innerHTML = '';
       
@@ -1061,6 +1011,7 @@
               <td><input type="number" class="editable" value="${item.quantity}" onchange="updateEstimateQuantity(${item.srNumber}, this.value)"></td>
               <td><input type="number" class="editable" value="${item.rate}" onchange="updateEstimateRate(${item.srNumber}, this.value)"></td>
               <td>₹${item.total}</td>
+              <td>${productInventory[item.productCode]?.stock || 'Unknown'}</td>
             `;
           } else {
             row.innerHTML = `
@@ -1072,47 +1023,12 @@
               <td>${item.quantity}</td>
               <td>₹${item.rate}</td>
               <td>₹${item.total}</td>
+              <td>${productInventory[item.productCode]?.stock || 'Unknown'}</td>
             `;
           }
           
           estimateDetailBody.appendChild(row);
         });
-        
-        updateEstimateProductAvailability(estimate.items[0].productCode);
-      }
-    }
-
-    // Function to update estimate product availability card
-    function updateEstimateProductAvailability(productCode) {
-      const productInfoDiv = document.getElementById('estimate-product-info');
-      const product = products.find(p => p.code === productCode);
-      const inventory = productInventory[productCode];
-      
-      if (product && inventory) {
-        let stockClass = 'in-stock';
-        let stockText = 'In Stock';
-        
-        if (inventory.stock === 0) {
-          stockClass = 'out-of-stock';
-          stockText = 'Out of Stock';
-        } else if (inventory.stock < 10) {
-          stockClass = 'low-stock';
-          stockText = 'Low Stock';
-        }
-        
-        productInfoDiv.innerHTML = `
-          <p><span>Product Code:</span> <span>${productCode}</span></p>
-          <p><span>Name:</span> <span>${product.name}</span></p>
-          <p><span>Category:</span> <span>${product.category}</span></p>
-          <p><span>Size:</span> <span>${product.size}</span></p>
-          <p><span>Price:</span> <span>₹${product.price}</span></p>
-          <p><span>Available Quantity:</span> <span>${inventory.stock}</span></p>
-          <p><span>Supplier:</span> <span>${inventory.supplier}</span></p>
-          <p><span>Last Updated:</span> <span>${inventory.lastUpdated}</span></p>
-          <div class="availability ${stockClass}">${stockText}</div>
-        `;
-      } else {
-        productInfoDiv.innerHTML = `<p>No product data available for code: ${productCode}</p>`;
       }
     }
 
@@ -1130,7 +1046,10 @@
             item.size = product.size;
             item.rate = product.price;
             item.total = item.quantity * item.rate;
-            updateEstimateProductAvailability(value);
+            
+            // Save to localStorage
+            localStorage.setItem('estimates', JSON.stringify(estimates));
+            
             showEstimateDetail(true);
           }
         }
@@ -1146,6 +1065,10 @@
           item.quantity = parseInt(value) || 0;
           item.total = item.quantity * item.rate;
           estimate.totalAmount = estimate.items.reduce((sum, item) => sum + item.total, 0);
+          
+          // Save to localStorage
+          localStorage.setItem('estimates', JSON.stringify(estimates));
+          
           showEstimateDetail(true);
         }
       }
@@ -1160,9 +1083,25 @@
           item.rate = parseFloat(value) || 0;
           item.total = item.quantity * item.rate;
           estimate.totalAmount = estimate.items.reduce((sum, item) => sum + item.total, 0);
+          
+          // Save to localStorage
+          localStorage.setItem('estimates', JSON.stringify(estimates));
+          
           showEstimateDetail(true);
         }
       }
+    }
+
+    // Function to close order detail modal
+    function closeOrderDetail() {
+      document.getElementById('order-detail-section').classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Re-enable scrolling
+    }
+
+    // Function to close estimate detail modal
+    function closeEstimateDetail() {
+      document.getElementById('estimate-detail-section').classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Re-enable scrolling
     }
 
     // Show orders section by default

@@ -214,6 +214,35 @@
       font-size: 16px;
       color: #333;
     }
+
+    .details-section {
+      margin-bottom: 25px;
+    }
+    .details-section h3 {
+      margin: 0 0 15px 0;
+      color: #333;
+      font-size: 18px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .details-row {
+      display: flex;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .details-label {
+      width: 150px;
+      font-weight: 500;
+      color: #666;
+    }
+    .details-value {
+      flex: 1;
+      color: #333;
+    }
+    .vendor-details-container {
+      padding: 20px 0;
+    }
   </style>
 </head>
 
@@ -264,22 +293,36 @@
         <h2>Customer Details</h2>
         <button class="close-btn">&times;</button>
       </div>
-      <div class="customer-details">
-        <div class="detail-item">
-          <strong>Customer Name:</strong> <span id="view-customer-name"></span>
+      <div class="vendor-details-container">
+        <div class="details-section">
+          <h3>Basic Information</h3>
+          <div class="details-row">
+            <div class="details-label">Customer Name:</div>
+            <div class="details-value" id="view-customer-name"></div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Contact Number:</div>
+            <div class="details-value" id="view-customer-contact"></div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Email:</div>
+            <div class="details-value" id="view-customer-email"></div>
+          </div>
         </div>
-        <div class="detail-item">
-          <strong>Contact Number:</strong> <span id="view-customer-contact"></span>
+        <div class="details-section">
+          <h3>Additional Information</h3>
+          <div class="details-row">
+            <div class="details-label">Agent:</div>
+            <div class="details-value" id="view-customer-agent"></div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Address/City:</div>
+            <div class="details-value" id="view-customer-address"></div>
+          </div>
         </div>
-        <div class="detail-item">
-          <strong>Agent:</strong> <span id="view-customer-agent"></span>
-        </div>
-        <div class="detail-item">
-          <strong>Address/City:</strong> <span id="view-customer-address"></span>
-        </div>
-        <div class="detail-item">
-          <strong>Email:</strong> <span id="view-customer-email"></span>
-        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-outline close-modal">Close</button>
       </div>
     </div>
   </div>
